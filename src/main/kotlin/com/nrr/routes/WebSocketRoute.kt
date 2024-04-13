@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import java.util.Collections
+import java.util.*
 
 fun Routing.webSocketRouting() {
     val connections = Collections.synchronizedList<WebSocketConnection>(mutableListOf())
@@ -16,8 +16,9 @@ fun Routing.webSocketRouting() {
         lateinit var connection: WebSocketConnection
         var conError: Exception? = null
         try {
-            // TODO: based on latest logged in account
-            val session = call.sessions.get<UserSession>() ?: UserSession(1, "Schierke")
+            val session = call.sessions.get<UserSession>() ?: return@webSocket call.respondText(
+                "Log in first"
+            )
             connection = WebSocketConnection(this, session)
             connections += connection
             send("Connected to websocket")

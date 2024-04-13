@@ -30,7 +30,7 @@ fun Route.userRouting() {
             val added = repo.insert(body.toUser())
             call.sessions.set(UserSession(added.id, added.username))
             val response = CreateUserResponse.generate(added)
-            call.respond(response)
+            call.respond(status = HttpStatusCode.Created, message = response)
         }
 
         get("/{id?}") {
@@ -54,7 +54,7 @@ fun Route.userRouting() {
 
         get("/@me") {
             val session = call.sessions.get<UserSession>() ?: return@get call.respondText(
-                "You are not logged into an account",
+                "You are not logged into any account",
                 status = HttpStatusCode.BadRequest
             )
             call.respond(GetUser(session.id, session.username))
